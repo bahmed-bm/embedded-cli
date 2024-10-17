@@ -274,8 +274,8 @@ static void onControlInput(EmbeddedCli *cli, char c);
 static void parseCommand(EmbeddedCli *cli);
 
 /**
- * Print help for given binding (if it is set)
- * @param binding
+ * Setup bindings for internal commands, like help
+ * @param cli
  */
 static void printBindingHelp(EmbeddedCli *cli, CliCommandBinding *binding);
 
@@ -1274,4 +1274,69 @@ static uint16_t getTokenPosition(const char *tokenizedStr, uint16_t pos) {
         return i;
     else
         return CLI_TOKEN_NPOS;
+}
+
+
+void embeddedCliAutoCompletedEnable(EmbeddedCli *cli)
+{
+	PREPARE_IMPL(cli);
+	SET_FLAG(impl->flags, CLI_FLAG_AUTOCOMPLETE_ENABLED);
+}
+
+void embeddedCliAutoCompletedDisable(EmbeddedCli *cli)
+{
+	PREPARE_IMPL(cli);
+	UNSET_U8FLAG(impl->flags, CLI_FLAG_AUTOCOMPLETE_ENABLED);
+}
+
+int32_t parseNamedIntParam(char *args, char *name, int32_t defaultValue)
+{
+	int32_t value=defaultValue;
+	WORD paramCount = embeddedCliGetTokenCount(args);
+
+	for(int i=1; i <= paramCount; i++)
+	{
+		char *param = strstr(embeddedCliGetToken(args, i),name);
+		if(param != NULL)
+		{
+			param += strlen(name); 
+			if(*param == '=')
+			{
+				param++; // skip the = sign
+				
+				if(sscanf(param,"%d",&value) == 1)
+				{
+					break;
+				}
+			}
+		}
+	}
+
+	return value;
+}
+
+float parseNamedFloatParam(char *args, char *name, float defaultValue)
+{
+	float value=defaultValue;
+	WORD paramCount = embeddedCliGetTokenCount(args);
+
+	for(int i=1; i <= paramCount; i++)
+	{
+		char *param = strstr(embeddedCliGetToken(args, i),name);
+		if(param != NULL)
+		{
+			param += strlen(name); 
+			if(*param == '=')
+			{
+				param++; // skip the = sign
+				
+				if(sscanf(param,"%f",&value) == 1)
+				{
+					break;
+				}
+			}
+		}
+	}
+
+	return value;
 }

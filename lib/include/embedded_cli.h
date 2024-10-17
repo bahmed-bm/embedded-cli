@@ -304,6 +304,11 @@ uint16_t embeddedCliFindToken(const char *tokenizedStr, const char *token);
  */
 uint16_t embeddedCliGetTokenCount(const char *tokenizedStr);
 
+void embeddedCliAutoCompletedEnable(EmbeddedCli *cli);
+void embeddedCliAutoCompletedDisable(EmbeddedCli *cli);
+int32_t parseNamedIntParam(char *args, char *name, int32_t defaultValue);
+float parseNamedFloatParam(char *args, char *name, float defaultValue);
+
 #ifdef __cplusplus
 }
 #endif
